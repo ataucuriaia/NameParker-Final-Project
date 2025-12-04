@@ -95,7 +95,10 @@ let state = {
   cardShownTime: null,
   sessionStartTime: null,
   totalStudents: students.length,
-  isFlipped: false
+  isFlipped: false,
+  mediaRecorder: null,
+  recordedChunks: [],
+  recordedAudio: null
 };
 
 // ============================================
@@ -115,6 +118,10 @@ const elements = {
   cardPhotoBack: document.getElementById('card-photo-back'),
   studentName: document.getElementById('student-name'),
   audioBtn: document.getElementById('audio-btn'),
+  recordBtn: document.getElementById('record-btn'),
+  stopRecordBtn: document.getElementById('stop-record-btn'),
+  playRecordedBtn: document.getElementById('play-recorded-btn'),
+  deleteRecordedBtn: document.getElementById('delete-recorded-btn'),
   evalButtons: document.getElementById('eval-buttons'),
   btnCorrect: document.getElementById('btn-correct'),
   btnMissed: document.getElementById('btn-missed'),
@@ -168,7 +175,10 @@ function initSession(studentList = students) {
     cardShownTime: null,
     sessionStartTime: Date.now(),
     totalStudents: studentList.length,
-    isFlipped: false
+    isFlipped: false,
+    mediaRecorder: null,
+    recordedChunks: [],
+    recordedAudio: null
   };
   
   elements.totalNum.textContent = state.totalStudents;
@@ -188,6 +198,12 @@ function showNextCard() {
   // Reset card state
   elements.flashcard.classList.remove('flipped');
   elements.evalButtons.classList.add('hidden');
+  
+  // Reset recording button states
+  elements.stopRecordBtn.classList.add('hidden');
+  if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+    state.mediaRecorder.stop();
+  }
 
   // Update card content
   elements.cardPhotoFront.src = state.currentCard.photoUrl;
@@ -199,6 +215,12 @@ function showNextCard() {
   elements.currentNum.textContent = reviewed;
   const progress = (state.completed.length / state.totalStudents) * 100;
   elements.progressFill.style.width = `${progress}%`;
+  
+  // Stop any playing audio
+  if (state.recordedAudio) {
+    state.recordedAudio.pause();
+    state.recordedAudio = null;
+  }
 }
 
 function flipCard() {
@@ -207,19 +229,47 @@ function flipCard() {
   state.isFlipped = true;
   elements.flashcard.classList.add('flipped');
   
+  // Update recording buttons when card is flipped
+  updateRecordingButtons();
+  
   // Show eval buttons after flip animation
   setTimeout(() => {
     elements.evalButtons.classList.remove('hidden');
   }, 400);
 }
 
+function getRecordedAudio(studentId) {
+  const recorded = localStorage.getItem(`pronunciation_${studentId}`);
+  return recorded ? recorded : null;
+}
+
+function saveRecordedAudio(studentId, audioBlob) {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    localStorage.setItem(`pronunciation_${studentId}`, reader.result);
+  };
+  reader.readAsDataURL(audioBlob);
+}
+
+function deleteRecordedAudio(studentId) {
+  localStorage.removeItem(`pronunciation_${studentId}`);
+  updateRecordingButtons();
+}
+
 function playPronunciation() {
   const student = state.currentCard;
   
-  // Check if browser supports speech synthesis
+  // Always play the original text-to-speech pronunciation
   if ('speechSynthesis' in window) {
     // Stop any ongoing speech
     window.speechSynthesis.cancel();
+    
+    // Stop any playing recorded audio
+    if (state.recordedAudio) {
+      state.recordedAudio.pause();
+      state.recordedAudio.currentTime = 0;
+      elements.playRecordedBtn.textContent = '▶️ Play recorded';
+    }
     
     // Add visual feedback - show playing state
     elements.audioBtn.textContent = '🔊 Playing...';
@@ -261,6 +311,137 @@ function playPronunciation() {
   } else {
     // Fallback if speech synthesis is not supported
     alert(`Pronunciation: ${student.pronunciation}`);
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.mediaRecorder = new MediaRecorder(stream);
+    state.recordedChunks = [];
+    
+    state.mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        state.recordedChunks.push(event.data);
+      }
+    };
+    
+    state.mediaRecorder.onstop = () => {
+      const blob = new Blob(state.recordedChunks, { type: 'audio/webm' });
+      
+      // Save the recording
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        localStorage.setItem(`pronunciation_${state.currentCard.id}`, reader.result);
+        // Update buttons after saving
+        updateRecordingButtons();
+        // Auto-play the recording after it's saved
+        setTimeout(() => {
+          playRecorded();
+        }, 100);
+      };
+      reader.readAsDataURL(blob);
+      
+      // Stop all tracks to release microphone
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    state.mediaRecorder.start();
+    elements.recordBtn.classList.add('hidden');
+    elements.stopRecordBtn.classList.remove('hidden');
+    elements.audioBtn.disabled = true;
+    
+  } catch (error) {
+    console.error('Error accessing microphone:', error);
+    alert('Could not access microphone. Please check your permissions.');
+  }
+}
+
+function stopRecording() {
+  if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') {
+    state.mediaRecorder.stop();
+    elements.stopRecordBtn.classList.add('hidden');
+    elements.recordBtn.classList.remove('hidden');
+    elements.audioBtn.disabled = false;
+  }
+}
+
+function playRecorded() {
+  const student = state.currentCard;
+  const recordedAudioData = getRecordedAudio(student.id);
+  
+  if (recordedAudioData) {
+    // Stop any ongoing text-to-speech
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    
+    // If audio is already playing, pause it
+    if (state.recordedAudio && !state.recordedAudio.paused) {
+      state.recordedAudio.pause();
+      state.recordedAudio.currentTime = 0;
+      elements.playRecordedBtn.textContent = '▶️ Play recorded';
+      return;
+    }
+    
+    // Create new audio instance if needed
+    if (!state.recordedAudio || state.recordedAudio.src !== recordedAudioData) {
+      state.recordedAudio = new Audio(recordedAudioData);
+    }
+    
+    // Reset audio to beginning
+    state.recordedAudio.currentTime = 0;
+    elements.playRecordedBtn.textContent = '⏸️ Pause';
+    
+    state.recordedAudio.onended = () => {
+      elements.playRecordedBtn.textContent = '▶️ Play recorded';
+    };
+    
+    state.recordedAudio.onpause = () => {
+      elements.playRecordedBtn.textContent = '▶️ Play recorded';
+    };
+    
+    state.recordedAudio.onplay = () => {
+      elements.playRecordedBtn.textContent = '⏸️ Pause';
+    };
+    
+    state.recordedAudio.onerror = () => {
+      elements.playRecordedBtn.textContent = '▶️ Play recorded';
+      alert('Error playing recording. Please try recording again.');
+    };
+    
+    state.recordedAudio.play();
+  }
+}
+
+function deleteRecording() {
+  if (confirm('Are you sure you want to delete this recording?')) {
+    deleteRecordedAudio(state.currentCard.id);
+    if (state.recordedAudio) {
+      state.recordedAudio.pause();
+      state.recordedAudio = null;
+    }
+    // Update buttons to show record button again
+    updateRecordingButtons();
+  }
+}
+
+function updateRecordingButtons() {
+  if (!state.currentCard) return;
+  
+  const hasRecording = getRecordedAudio(state.currentCard.id) !== null;
+  
+  // Only update if card is flipped (buttons are on the back)
+  if (!state.isFlipped) return;
+  
+  if (hasRecording) {
+    elements.recordBtn.classList.add('hidden');
+    elements.playRecordedBtn.classList.remove('hidden');
+    elements.deleteRecordedBtn.classList.remove('hidden');
+  } else {
+    elements.recordBtn.classList.remove('hidden');
+    elements.playRecordedBtn.classList.add('hidden');
+    elements.deleteRecordedBtn.classList.add('hidden');
   }
 }
 
@@ -386,6 +567,26 @@ elements.flashcard.addEventListener('click', flipCard);
 elements.audioBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   playPronunciation();
+});
+elements.recordBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  startRecording();
+});
+elements.stopRecordBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  stopRecording();
+});
+elements.playRecordedBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (state.recordedAudio && !state.recordedAudio.paused) {
+    state.recordedAudio.pause();
+  } else {
+    playRecorded();
+  }
+});
+elements.deleteRecordedBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  deleteRecording();
 });
 elements.btnCorrect.addEventListener('click', () => recordResult(true));
 elements.btnMissed.addEventListener('click', () => recordResult(false));
