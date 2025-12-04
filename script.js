@@ -214,11 +214,70 @@ function flipCard() {
 }
 
 function playPronunciation() {
-  // In production, this would play audio from NameCoach
-  // For MVP, we show the pronunciation guide
   const student = state.currentCard;
-  alert(`Pronunciation: ${student.pronunciation}`);
-  console.log(`Playing pronunciation for: ${student.preferredName}`);
+  
+  // Check if browser supports speech synthesis
+  if ('speechSynthesis' in window) {
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Add visual feedback - show playing state
+    elements.audioBtn.textContent = '🔊 Playing...';
+    elements.audioBtn.disabled = true;
+    
+    // Create a new speech utterance
+    const utterance = new SpeechSynthesisUtterance(student.preferredName);
+    
+    // Configure speech settings
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    // Try to use a more natural voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => 
+      voice.lang.includes('en') && (voice.name.includes('Google') || voice.name.includes('Natural'))
+    ) || voices.find(voice => voice.lang.includes('en'));
+    
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+    
+    // Reset button when speech ends
+    utterance.onend = () => {
+      elements.audioBtn.textContent = '🔊 Hear pronunciation';
+      elements.audioBtn.disabled = false;
+    };
+    
+    utterance.onerror = () => {
+      elements.audioBtn.textContent = '🔊 Hear pronunciation';
+      elements.audioBtn.disabled = false;
+    };
+    
+    // Speak the name
+    window.speechSynthesis.speak(utterance);
+    
+    console.log(`Playing pronunciation for: ${student.preferredName}`);
+  } else {
+    // Fallback if speech synthesis is not supported
+    alert(`Pronunciation: ${student.pronunciation}`);
+  }
+}
+
+// Ensure voices are loaded (some browsers need this)
+if ('speechSynthesis' in window) {
+  // Load voices when available
+  window.speechSynthesis.onvoiceschanged = () => {
+    console.log('Voices loaded:', window.speechSynthesis.getVoices().length);
+  };
+  
+  // Also try to get voices immediately
+  setTimeout(() => {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      console.log('Voices available:', voices.length);
+    }
+  }, 100);
 }
 
 function recordResult(gotCorrect) {
