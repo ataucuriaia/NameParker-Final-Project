@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Name Recall - Professor Prep</title>
+</head>
+<body>
+  <div id="app">
+    
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active">
+      <div class="logo">🎓</div>
+      <h1>Name Recall</h1>
+      <p class="subtitle">Review student names before class</p>
+      <div class="deck-info">
+        <span id="deck-count">10</span> students in deck
+      </div>
+      <button id="start-btn" class="btn btn-primary">Begin Review</button>
+    </div>
+
+    <!-- FLASHCARD SCREEN -->
+    <div id="card-screen" class="screen">
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <p class="progress-text"><span id="current-num">1</span> of <span id="total-num">10</span></p>
+      
+      <div id="flashcard" class="flashcard">
+        <!-- CARD FRONT -->
+        <div class="card-face card-front">
+          <div class="photo-container">
+            <img id="card-photo-front" src="" alt="Student photo">
+          </div>
+          <p class="tap-hint">Tap to reveal name</p>
+        </div>
+        
+        <!-- CARD BACK -->
+        <div class="card-face card-back">
+          <div class="photo-container small">
+            <img id="card-photo-back" src="" alt="Student photo">
+          </div>
+          <div class="name-reveal">
+            <h2 id="student-name"></h2>
+            <button id="audio-btn" class="btn btn-audio">
+              🔊 Hear pronunciation
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELF-EVALUATION -->
+      <div id="eval-buttons" class="eval-buttons hidden">
+        <p class="eval-prompt">Did you get it right?</p>
+        <div class="btn-group">
+          <button id="btn-correct" class="btn btn-success">✓ Got it</button>
+          <button id="btn-missed" class="btn btn-danger">✗ Missed</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="results-screen" class="screen">
+      <div class="results-content">
+        <h1 id="results-message">Great Job!</h1>
+        
+        <div class="score-circle">
+          <svg viewBox="0 0 100 100">
+            <circle class="score-bg" cx="50" cy="50" r="45"/>
+            <circle id="score-ring" class="score-ring" cx="50" cy="50" r="45"/>
+          </svg>
+          <div class="score-text">
+            <span id="score-percent">80</span>%
+          </div>
+        </div>
+        
+        <p class="score-fraction"><span id="score-correct">8</span>/<span id="score-total">10</span> students</p>
+        
+        <div class="session-stats">
+          <div class="stat">
+            <span class="stat-value" id="session-time">2:30</span>
+            <span class="stat-label">Session Time</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="avg-response">3.2s</span>
+            <span class="stat-label">Avg Response</span>
+          </div>
+        </div>
+        
+        <button id="review-again-btn" class="btn btn-primary">Review Again</button>
+        <button id="review-missed-btn" class="btn btn-secondary hidden">Practice Missed Only</button>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
