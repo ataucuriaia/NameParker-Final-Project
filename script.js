@@ -1,9 +1,26 @@
 // ============================================
 // PROFESSOR DATA
 // ============================================
+// The base64 image is embedded in professor-photo.js file
+// This makes it completely self-contained - no external image files needed
+
 const professor = {
   name: "Alex Cowan",
-  photoUrl: "AlexC.png",
+  get photoUrl() {
+    // Use the embedded base64 constant from professor-photo.js
+    if (typeof PROFESSOR_PHOTO_BASE64 !== 'undefined' && PROFESSOR_PHOTO_BASE64) {
+      // Cache it in localStorage for faster future loads
+      if (!localStorage.getItem('professor_photo_base64')) {
+        localStorage.setItem('professor_photo_base64', PROFESSOR_PHOTO_BASE64);
+      }
+      return PROFESSOR_PHOTO_BASE64;
+    }
+    // Fallback to localStorage if constant not loaded yet
+    const cached = localStorage.getItem('professor_photo_base64');
+    if (cached) return cached;
+    // Final fallback
+    return null;
+  },
   title: "Professor"
 };
 
@@ -667,18 +684,12 @@ function initSession(studentList = null) {
   elements.deckCount.textContent = studentList.length;
   
   // Update professor info
-  const professorPhoto = document.getElementById('professor-photo');
   const professorName = document.getElementById('professor-name');
-  if (professorPhoto) {
-    professorPhoto.src = professor.photoUrl;
-    professorPhoto.onerror = function() {
-      // Fallback if image fails to load
-      this.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
-    };
-  }
   if (professorName) {
     professorName.textContent = professor.name;
   }
+  // Update photo using the proper function
+  updateProfessorPhoto();
 }
 
 function showNextCard() {
@@ -1276,23 +1287,45 @@ if (elements.backToHomeBtn) {
 // ============================================
 // INITIALIZE
 // ============================================
-// Initialize professor info immediately
+// Initialize professor info
 const professorPhoto = document.getElementById('professor-photo');
 const professorName = document.getElementById('professor-name');
-if (professorPhoto) {
-  professorPhoto.src = professor.photoUrl;
-  professorPhoto.onerror = function() {
-    // Fallback if image fails to load
-    console.error('Failed to load professor image, using placeholder');
-    this.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
-  };
-  professorPhoto.onload = function() {
-    console.log('Professor image loaded successfully');
-  };
+
+// Function to update professor photo
+function updateProfessorPhoto() {
+  if (professorPhoto) {
+    const photoUrl = professor.photoUrl;
+    if (photoUrl) {
+      professorPhoto.src = photoUrl;
+    } else {
+      // Wait a bit for the embedded constant to be available
+      setTimeout(() => {
+        const url = professor.photoUrl;
+        if (url && professorPhoto) {
+          professorPhoto.src = url;
+        } else {
+          // Final fallback
+          professorPhoto.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
+        }
+      }, 100);
+    }
+    professorPhoto.onerror = function() {
+      // Fallback if image fails to load
+      console.error('Failed to load professor image, using placeholder');
+      this.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
+    };
+    professorPhoto.onload = function() {
+      console.log('Professor image loaded successfully');
+    };
+  }
 }
+
 if (professorName) {
   professorName.textContent = professor.name;
 }
+
+// Update photo (will use loaded base64 or load it)
+updateProfessorPhoto();
 
 // Initialize course selection buttons
 document.querySelectorAll('.course-btn').forEach(btn => {
