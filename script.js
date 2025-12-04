@@ -8,7 +8,8 @@ const students = [
     lastName: "Chen",
     preferredName: "Sarah Chen",
     photoUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-    pronunciation: "SAIR-uh CHEN"
+    pronunciation: "SAIR-uh CHEN",
+    gender: "female"
   },
   {
     id: 2,
@@ -16,7 +17,8 @@ const students = [
     lastName: "Johnson",
     preferredName: "Marcus Johnson",
     photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-    pronunciation: "MAR-kus JOHN-son"
+    pronunciation: "MAR-kus JOHN-son",
+    gender: "male"
   },
   {
     id: 3,
@@ -24,7 +26,8 @@ const students = [
     lastName: "Patel",
     preferredName: "Priya Patel",
     photoUrl: "https://randomuser.me/api/portraits/women/65.jpg",
-    pronunciation: "PREE-yah puh-TEL"
+    pronunciation: "PREE-yah puh-TEL",
+    gender: "female"
   },
   {
     id: 4,
@@ -32,7 +35,8 @@ const students = [
     lastName: "O'Brien",
     preferredName: "Jamie O'Brien",
     photoUrl: "https://randomuser.me/api/portraits/men/75.jpg",
-    pronunciation: "JAY-mee oh-BRY-en"
+    pronunciation: "JAY-mee oh-BRY-en",
+    gender: "male"
   },
   {
     id: 5,
@@ -40,7 +44,8 @@ const students = [
     lastName: "Tanaka",
     preferredName: "Yuki Tanaka",
     photoUrl: "https://randomuser.me/api/portraits/women/52.jpg",
-    pronunciation: "YOO-kee tah-NAH-kah"
+    pronunciation: "YOO-kee tah-NAH-kah",
+    gender: "female"
   },
   {
     id: 6,
@@ -48,7 +53,8 @@ const students = [
     lastName: "Hassan",
     preferredName: "Ahmed Hassan",
     photoUrl: "https://randomuser.me/api/portraits/men/22.jpg",
-    pronunciation: "AH-med hah-SAHN"
+    pronunciation: "AH-med hah-SAHN",
+    gender: "male"
   },
   {
     id: 7,
@@ -56,7 +62,8 @@ const students = [
     lastName: "Rodriguez",
     preferredName: "Emily Rodriguez",
     photoUrl: "https://randomuser.me/api/portraits/women/28.jpg",
-    pronunciation: "EM-uh-lee rod-REE-gez"
+    pronunciation: "EM-uh-lee rod-REE-gez",
+    gender: "female"
   },
   {
     id: 8,
@@ -64,7 +71,8 @@ const students = [
     lastName: "Zhang",
     preferredName: "Wei Zhang",
     photoUrl: "https://randomuser.me/api/portraits/men/55.jpg",
-    pronunciation: "WAY JAHNG"
+    pronunciation: "WAY JAHNG",
+    gender: "male"
   },
   {
     id: 9,
@@ -72,7 +80,8 @@ const students = [
     lastName: "Adeyemi",
     preferredName: "Seun Adeyemi",
     photoUrl: "https://randomuser.me/api/portraits/men/18.jpg",
-    pronunciation: "SHAY-oon ah-DEH-yeh-mee"
+    pronunciation: "SHAY-oon ah-DEH-yeh-mee",
+    gender: "male"
   },
   {
     id: 10,
@@ -80,7 +89,8 @@ const students = [
     lastName: "Gonzalez",
     preferredName: "Maria Gonzalez",
     photoUrl: "https://randomuser.me/api/portraits/women/33.jpg",
-    pronunciation: "mah-REE-ah gon-ZAH-lez"
+    pronunciation: "mah-REE-ah gon-ZAH-lez",
+    gender: "female"
   }
 ];
 
@@ -380,19 +390,19 @@ function playPronunciation() {
     // Create a new speech utterance
     const utterance = new SpeechSynthesisUtterance(student.preferredName);
     
-    // Configure speech settings
-    utterance.rate = 0.9; // Slightly slower for clarity
-    utterance.pitch = 1;
+    // Configure speech settings (like a real student recording)
+    utterance.rate = 0.85; // Slightly slower for clarity (like a real recording)
+    utterance.pitch = student.gender === 'female' ? 1.1 : 0.9; // Slightly higher pitch for females, lower for males
     utterance.volume = 1;
     
-    // Try to use a more natural voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(voice => 
-      voice.lang.includes('en') && (voice.name.includes('Google') || voice.name.includes('Natural'))
-    ) || voices.find(voice => voice.lang.includes('en'));
+    // Get student-specific voice (consistent per student, gender-matched)
+    const studentVoice = getStudentVoice(student);
     
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
+    if (studentVoice) {
+      utterance.voice = studentVoice;
+      console.log(`Using voice for ${student.preferredName}: ${studentVoice.name} (${student.gender})`);
+    } else {
+      console.warn('No voice found for student:', student.preferredName);
     }
     
     // Reset button when speech ends
@@ -409,7 +419,7 @@ function playPronunciation() {
     // Speak the name
     window.speechSynthesis.speak(utterance);
     
-    console.log(`Playing pronunciation for: ${student.preferredName}`);
+    console.log(`Playing pronunciation for: ${student.preferredName} (${student.gender})`);
   } else {
     // Fallback if speech synthesis is not supported
     alert(`Pronunciation: ${student.pronunciation}`);
@@ -547,20 +557,113 @@ function updateRecordingButtons() {
   }
 }
 
-// Ensure voices are loaded (some browsers need this)
+// ============================================
+// VOICE MANAGEMENT
+// ============================================
+let availableVoices = [];
+let voicesLoaded = false;
+
+function loadVoices() {
+  if ('speechSynthesis' in window) {
+    availableVoices = window.speechSynthesis.getVoices();
+    voicesLoaded = availableVoices.length > 0;
+    
+    if (voicesLoaded) {
+      console.log('Voices loaded:', availableVoices.length);
+      console.log('Female voices:', availableVoices.filter(v => v.gender === 'female' || v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('samantha') || v.name.toLowerCase().includes('karen')).length);
+      console.log('Male voices:', availableVoices.filter(v => v.gender === 'male' || v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('mark') || v.name.toLowerCase().includes('tom')).length);
+    }
+  }
+}
+
+// Load voices when available
 if ('speechSynthesis' in window) {
-  // Load voices when available
-  window.speechSynthesis.onvoiceschanged = () => {
-    console.log('Voices loaded:', window.speechSynthesis.getVoices().length);
-  };
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
   
   // Also try to get voices immediately
-  setTimeout(() => {
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      console.log('Voices available:', voices.length);
+  setTimeout(loadVoices, 100);
+  setTimeout(loadVoices, 500);
+}
+
+function getVoicesByGender(gender) {
+  if (!voicesLoaded || availableVoices.length === 0) {
+    loadVoices();
+  }
+  
+  const genderVoices = availableVoices.filter(voice => {
+    const voiceName = voice.name.toLowerCase();
+    const voiceLang = voice.lang.toLowerCase();
+    
+    // Check explicit gender property
+    if (voice.gender === gender) {
+      return true;
     }
-  }, 100);
+    
+    // Check voice name for gender indicators
+    if (gender === 'female') {
+      return voiceName.includes('female') || 
+             voiceName.includes('zira') || 
+             voiceName.includes('samantha') || 
+             voiceName.includes('karen') ||
+             voiceName.includes('susan') ||
+             voiceName.includes('hazel') ||
+             voiceName.includes('tessa') ||
+             voiceName.includes('veena') ||
+             voiceName.includes('fiona') ||
+             voiceName.includes('victoria') ||
+             voiceName.includes('alice') ||
+             voiceName.includes('nora') ||
+             voiceName.includes('moira') ||
+             voiceName.includes('siri') ||
+             (voiceLang.includes('en') && !voiceName.includes('male') && !voiceName.includes('david') && !voiceName.includes('mark') && !voiceName.includes('tom') && !voiceName.includes('alex') && !voiceName.includes('daniel'));
+    } else {
+      return voiceName.includes('male') || 
+             voiceName.includes('david') || 
+             voiceName.includes('mark') || 
+             voiceName.includes('tom') ||
+             voiceName.includes('alex') ||
+             voiceName.includes('daniel') ||
+             voiceName.includes('james') ||
+             voiceName.includes('oliver') ||
+             voiceName.includes('george') ||
+             voiceName.includes('thomas');
+    }
+  });
+  
+  // If no gender-specific voices found, filter by language and exclude obvious opposite gender
+  if (genderVoices.length === 0) {
+    const englishVoices = availableVoices.filter(v => v.lang.toLowerCase().includes('en'));
+    if (gender === 'female') {
+      return englishVoices.filter(v => {
+        const name = v.name.toLowerCase();
+        return !name.includes('male') && !name.includes('david') && !name.includes('mark') && !name.includes('tom') && !name.includes('alex') && !name.includes('daniel');
+      });
+    } else {
+      return englishVoices.filter(v => {
+        const name = v.name.toLowerCase();
+        return !name.includes('female') && !name.includes('zira') && !name.includes('samantha') && !name.includes('karen');
+      });
+    }
+  }
+  
+  return genderVoices;
+}
+
+function getStudentVoice(student) {
+  // Get voices matching student's gender
+  const genderVoices = getVoicesByGender(student.gender);
+  
+  if (genderVoices.length === 0) {
+    // Fallback to any English voice
+    const englishVoices = availableVoices.filter(v => v.lang.toLowerCase().includes('en'));
+    return englishVoices.length > 0 ? englishVoices[0] : availableVoices[0];
+  }
+  
+  // Use student ID to consistently select a voice (so each student always has the same voice)
+  // This makes it feel like each student recorded their own name
+  const voiceIndex = (student.id - 1) % genderVoices.length;
+  return genderVoices[voiceIndex];
 }
 
 function recordResult(gotCorrect) {
