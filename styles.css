@@ -68,6 +68,96 @@ h1 {
   color: #64ffda;
 }
 
+/* ANALYTICS SECTION */
+.analytics-section {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.analytics-card {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 12px;
+}
+
+.analytics-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.analytics-label {
+  font-size: 12px;
+  color: #8892b0;
+}
+
+.analytics-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #64ffda;
+}
+
+.analytics-trend {
+  text-align: center;
+  font-size: 14px;
+  color: #8892b0;
+  margin-bottom: 8px;
+}
+
+.last-session-info {
+  text-align: center;
+  font-size: 12px;
+  color: #8892b0;
+  font-style: italic;
+}
+
+.historical-analytics {
+  margin: 32px auto 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.analytics-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #64ffda;
+  text-align: center;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.analytics-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.analytics-item-label {
+  font-size: 11px;
+  color: #8892b0;
+  text-align: center;
+}
+
+.analytics-item-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
 /* BUTTONS */
 .btn {
   padding: 16px 32px;
@@ -94,6 +184,10 @@ h1 {
 .btn-secondary {
   background: rgba(255,255,255,0.1);
   color: #fff;
+  margin-top: 12px;
+}
+
+#review-again-btn {
   margin-top: 12px;
 }
 
@@ -322,6 +416,9 @@ h1 {
 .results-content {
   text-align: center;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .results-content h1 {

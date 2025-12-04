@@ -17,6 +17,23 @@
       <div class="deck-info">
         <span id="deck-count">10</span> students in deck
       </div>
+      
+      <!-- Analytics Section -->
+      <div class="analytics-section">
+        <div class="analytics-card">
+          <div class="analytics-stat">
+            <span class="analytics-label">Total Sessions</span>
+            <span class="analytics-value" id="session-count">0</span>
+          </div>
+          <div class="analytics-stat">
+            <span class="analytics-label">This Week</span>
+            <span class="analytics-value" id="weekly-frequency">0</span>
+          </div>
+        </div>
+        <div class="analytics-trend" id="accuracy-trend"></div>
+        <div class="last-session-info" id="last-session"></div>
+      </div>
+      
       <button id="start-btn" class="btn btn-primary">Begin Review</button>
     </div>
 
@@ -102,8 +119,28 @@
           </div>
         </div>
         
+        <!-- Historical Analytics -->
+        <div class="historical-analytics">
+          <h3 class="analytics-title">Your Progress</h3>
+          <div class="analytics-grid">
+            <div class="analytics-item">
+              <span class="analytics-item-label">Sessions This Week</span>
+              <span class="analytics-item-value" id="results-weekly-freq">0</span>
+            </div>
+            <div class="analytics-item">
+              <span class="analytics-item-label">Accuracy Trend</span>
+              <span class="analytics-item-value" id="results-accuracy-trend">--</span>
+            </div>
+            <div class="analytics-item">
+              <span class="analytics-item-label">Total Sessions</span>
+              <span class="analytics-item-value" id="results-total-sessions">0</span>
+            </div>
+          </div>
+        </div>
+        
         <button id="review-again-btn" class="btn btn-primary">Review Again</button>
         <button id="review-missed-btn" class="btn btn-secondary hidden">Practice Missed Only</button>
+        <button id="back-to-home-btn" class="btn btn-secondary">Back to Home</button>
       </div>
     </div>
 

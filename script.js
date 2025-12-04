@@ -136,7 +136,8 @@ const elements = {
   avgResponse: document.getElementById('avg-response'),
   resultsMessage: document.getElementById('results-message'),
   reviewAgainBtn: document.getElementById('review-again-btn'),
-  reviewMissedBtn: document.getElementById('review-missed-btn')
+  reviewMissedBtn: document.getElementById('review-missed-btn'),
+  backToHomeBtn: document.getElementById('back-to-home-btn')
 };
 
 // ============================================
@@ -151,9 +152,110 @@ function shuffle(array) {
   return arr;
 }
 
+// ============================================
+// ANALYTICS PERSISTENCE
+// ============================================
+function saveSessionToHistory(sessionData) {
+  const history = getSessionHistory();
+  history.push(sessionData);
+  // Keep only last 100 sessions to avoid localStorage limits
+  const recentHistory = history.slice(-100);
+  localStorage.setItem('nameRecall_sessionHistory', JSON.stringify(recentHistory));
+}
+
+function getSessionHistory() {
+  const stored = localStorage.getItem('nameRecall_sessionHistory');
+  return stored ? JSON.parse(stored) : [];
+}
+
+function getSessionsThisWeek() {
+  const history = getSessionHistory();
+  const now = Date.now();
+  const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+  return history.filter(session => session.timestamp >= oneWeekAgo);
+}
+
+function getSessionsThisMonth() {
+  const history = getSessionHistory();
+  const now = Date.now();
+  const oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
+  return history.filter(session => session.timestamp >= oneMonthAgo);
+}
+
+function calculateAccuracyTrend() {
+  const history = getSessionHistory();
+  if (history.length < 2) return null;
+  
+  // Get last 10 sessions for trend
+  const recentSessions = history.slice(-10);
+  const firstHalf = recentSessions.slice(0, Math.floor(recentSessions.length / 2));
+  const secondHalf = recentSessions.slice(Math.floor(recentSessions.length / 2));
+  
+  const firstAvg = firstHalf.reduce((sum, s) => sum + s.accuracy, 0) / firstHalf.length;
+  const secondAvg = secondHalf.reduce((sum, s) => sum + s.accuracy, 0) / secondHalf.length;
+  
+  return {
+    trend: secondAvg - firstAvg,
+    recentAverage: secondAvg,
+    previousAverage: firstAvg
+  };
+}
+
+function getSessionFrequency() {
+  const thisWeek = getSessionsThisWeek();
+  const thisMonth = getSessionsThisMonth();
+  
+  return {
+    thisWeek: thisWeek.length,
+    thisMonth: thisMonth.length,
+    averagePerWeek: thisMonth.length / 4.33 // Approximate weeks in a month
+  };
+}
+
+function updateStartScreenAnalytics() {
+  const history = getSessionHistory();
+  const frequency = getSessionFrequency();
+  const trend = calculateAccuracyTrend();
+  
+  // Update session count display
+  const sessionCountEl = document.getElementById('session-count');
+  if (sessionCountEl) {
+    sessionCountEl.textContent = history.length;
+  }
+  
+  // Update weekly frequency
+  const weeklyFreqEl = document.getElementById('weekly-frequency');
+  if (weeklyFreqEl) {
+    weeklyFreqEl.textContent = frequency.thisWeek;
+  }
+  
+  // Update accuracy trend
+  const trendEl = document.getElementById('accuracy-trend');
+  if (trendEl && trend) {
+    const trendIcon = trend.trend > 0 ? '📈' : trend.trend < 0 ? '📉' : '➡️';
+    const trendText = trend.trend > 0 ? `+${Math.round(trend.trend)}%` : 
+                     trend.trend < 0 ? `${Math.round(trend.trend)}%` : 'No change';
+    trendEl.innerHTML = `${trendIcon} ${trendText} (Recent: ${Math.round(trend.recentAverage)}%)`;
+  }
+  
+  // Update last session info
+  const lastSessionEl = document.getElementById('last-session');
+  if (lastSessionEl && history.length > 0) {
+    const lastSession = history[history.length - 1];
+    const daysAgo = Math.floor((Date.now() - lastSession.timestamp) / (24 * 60 * 60 * 1000));
+    const daysText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`;
+    lastSessionEl.textContent = `Last review: ${daysText} (${Math.round(lastSession.accuracy)}% accuracy)`;
+  }
+}
+
 function showScreen(screenName) {
   Object.values(screens).forEach(s => s.classList.remove('active'));
   screens[screenName].classList.add('active');
+  
+  // Update analytics when showing start screen
+  if (screenName === 'start') {
+    updateStartScreenAnalytics();
+  }
 }
 
 function formatTime(ms) {
@@ -464,21 +566,25 @@ if ('speechSynthesis' in window) {
 function recordResult(gotCorrect) {
   const responseTime = Date.now() - state.cardShownTime;
   
-  const result = {
-    studentId: state.currentCard.id,
-    studentName: state.currentCard.preferredName,
-    gotCorrect: gotCorrect,
-    responseTimeMs: responseTime,
-    attempts: 1
-  };
-
   // Check if this student was already attempted (spaced repetition)
   const existingResult = state.results.find(r => r.studentId === state.currentCard.id);
+  
   if (existingResult) {
+    // This is a second+ attempt
     existingResult.attempts++;
     existingResult.gotCorrect = gotCorrect;
     existingResult.responseTimeMs = responseTime;
+    // Keep the original firstAttemptCorrect value (don't change it)
   } else {
+    // This is the first attempt
+    const result = {
+      studentId: state.currentCard.id,
+      studentName: state.currentCard.preferredName,
+      gotCorrect: gotCorrect,
+      firstAttemptCorrect: gotCorrect, // Track first attempt separately
+      responseTimeMs: responseTime,
+      attempts: 1
+    };
     state.results.push(result);
   }
 
@@ -497,19 +603,47 @@ function showResults() {
   showScreen('results');
   
   const sessionDuration = Date.now() - state.sessionStartTime;
-  const correctCount = state.results.filter(r => r.gotCorrect).length;
-  const totalCount = state.results.length;
-  const percentage = Math.round((correctCount / totalCount) * 100);
   
-  // Calculate average response time
-  const avgResponseTime = state.results.reduce((sum, r) => sum + r.responseTimeMs, 0) / state.results.length;
+  // Calculate FIRST-ATTEMPT accuracy (MVP requirement)
+  const firstAttemptCorrect = state.results.filter(r => r.firstAttemptCorrect === true).length;
+  const totalUniqueStudents = state.results.length;
+  const percentage = totalUniqueStudents > 0 
+    ? Math.round((firstAttemptCorrect / totalUniqueStudents) * 100) 
+    : 0;
+  
+  // Also track mastery (eventually got it right) for display
+  const masteryCount = state.results.filter(r => r.gotCorrect === true).length;
+  const improvedCount = state.results.filter(r => !r.firstAttemptCorrect && r.gotCorrect).length;
+  
+  // Calculate average response time (only for first attempts)
+  const firstAttemptResults = state.results.filter(r => r.attempts === 1);
+  const avgResponseTime = firstAttemptResults.length > 0
+    ? firstAttemptResults.reduce((sum, r) => sum + r.responseTimeMs, 0) / firstAttemptResults.length
+    : 0;
 
   // Update UI
   elements.scorePercent.textContent = percentage;
-  elements.scoreCorrect.textContent = correctCount;
-  elements.scoreTotal.textContent = totalCount;
+  elements.scoreCorrect.textContent = firstAttemptCorrect;
+  elements.scoreTotal.textContent = totalUniqueStudents;
   elements.sessionTime.textContent = formatTime(sessionDuration);
   elements.avgResponse.textContent = `${(avgResponseTime / 1000).toFixed(1)}s`;
+  
+  // Update results message to show improvement if applicable
+  let resultsMessageText = '';
+  if (percentage >= 90) {
+    resultsMessageText = "Outstanding! 🌟";
+  } else if (percentage >= 70) {
+    resultsMessageText = "Great Job! 👏";
+  } else if (percentage >= 50) {
+    resultsMessageText = "Good Progress! 💪";
+  } else {
+    resultsMessageText = "Keep Practicing! 📚";
+  }
+  
+  // Add improvement note if students improved on second attempt
+  if (improvedCount > 0) {
+    resultsMessageText += ` (${improvedCount} improved with practice)`;
+  }
 
   // Animate score ring
   const circumference = 283; // 2 * PI * 45
@@ -518,31 +652,69 @@ function showResults() {
     elements.scoreRing.style.strokeDashoffset = offset;
   }, 100);
 
-  // Set message based on score
-  if (percentage >= 90) {
-    elements.resultsMessage.textContent = "Outstanding! 🌟";
-  } else if (percentage >= 70) {
-    elements.resultsMessage.textContent = "Great Job! 👏";
-  } else if (percentage >= 50) {
-    elements.resultsMessage.textContent = "Good Progress! 💪";
-  } else {
-    elements.resultsMessage.textContent = "Keep Practicing! 📚";
-  }
+  // Set message based on score (already set above with improvement note)
+  elements.resultsMessage.textContent = resultsMessageText;
 
-  // Show "Practice Missed" button if there were mistakes
-  const missedStudents = state.results.filter(r => !r.gotCorrect);
-  if (missedStudents.length > 0) {
+  // Show "Practice Missed" button if there were mistakes on first attempt
+  const missedOnFirstAttempt = state.results.filter(r => !r.firstAttemptCorrect);
+  if (missedOnFirstAttempt.length > 0) {
     elements.reviewMissedBtn.classList.remove('hidden');
   } else {
     elements.reviewMissedBtn.classList.add('hidden');
   }
 
+  // Save session to history (using first-attempt accuracy)
+  const sessionData = {
+    timestamp: state.sessionStartTime,
+    accuracy: percentage, // First-attempt accuracy
+    firstAttemptCorrect: firstAttemptCorrect,
+    masteryCount: masteryCount, // Eventually got it right
+    improvedCount: improvedCount, // Improved on second+ attempt
+    totalCount: totalUniqueStudents,
+    sessionDuration: sessionDuration,
+    avgResponseTime: avgResponseTime,
+    deckSize: state.totalStudents,
+    completionRate: Math.round((totalUniqueStudents / state.totalStudents) * 100),
+    results: state.results
+  };
+  saveSessionToHistory(sessionData);
+  
+  // Update historical analytics on results screen
+  const frequency = getSessionFrequency();
+  const trend = calculateAccuracyTrend();
+  const history = getSessionHistory();
+  
+  const weeklyFreqEl = document.getElementById('results-weekly-freq');
+  if (weeklyFreqEl) {
+    weeklyFreqEl.textContent = frequency.thisWeek;
+  }
+  
+  const trendEl = document.getElementById('results-accuracy-trend');
+  if (trendEl) {
+    if (trend) {
+      const trendIcon = trend.trend > 0 ? '📈' : trend.trend < 0 ? '📉' : '➡️';
+      const trendText = trend.trend > 0 ? `+${Math.round(trend.trend)}%` : 
+                       trend.trend < 0 ? `${Math.round(trend.trend)}%` : 'No change';
+      trendEl.innerHTML = `${trendIcon} ${trendText}`;
+    } else {
+      trendEl.textContent = '--';
+    }
+  }
+  
+  const totalSessionsEl = document.getElementById('results-total-sessions');
+  if (totalSessionsEl) {
+    totalSessionsEl.textContent = history.length;
+  }
+  
   // Log analytics data
   console.log('=== SESSION COMPLETE ===');
   console.log('Accuracy Rate:', percentage + '%');
   console.log('Session Duration:', formatTime(sessionDuration));
   console.log('Avg Response Time:', (avgResponseTime / 1000).toFixed(2) + 's');
   console.log('Detailed Results:', state.results);
+  console.log('Session saved to history');
+  console.log('Sessions this week:', frequency.thisWeek);
+  console.log('Accuracy trend:', trend);
 }
 
 function startSession() {
@@ -552,7 +724,8 @@ function startSession() {
 }
 
 function reviewMissedOnly() {
-  const missedIds = state.results.filter(r => !r.gotCorrect).map(r => r.studentId);
+  // Review students who missed on first attempt (even if they got it right later)
+  const missedIds = state.results.filter(r => !r.firstAttemptCorrect).map(r => r.studentId);
   const missedStudents = students.filter(s => missedIds.includes(s.id));
   initSession(missedStudents);
   showScreen('card');
@@ -590,12 +763,21 @@ elements.deleteRecordedBtn.addEventListener('click', (e) => {
 });
 elements.btnCorrect.addEventListener('click', () => recordResult(true));
 elements.btnMissed.addEventListener('click', () => recordResult(false));
-elements.reviewAgainBtn.addEventListener('click', startSession);
+elements.reviewAgainBtn.addEventListener('click', () => {
+  updateStartScreenAnalytics(); // Refresh analytics before starting new session
+  startSession();
+});
 elements.reviewMissedBtn.addEventListener('click', reviewMissedOnly);
+if (elements.backToHomeBtn) {
+  elements.backToHomeBtn.addEventListener('click', () => {
+    showScreen('start');
+  });
+}
 
 // ============================================
 // INITIALIZE
 // ============================================
 initSession();
+updateStartScreenAnalytics();
 console.log('Name Recall App Initialized');
 console.log('Students loaded:', students.length);
