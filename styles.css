@@ -34,9 +34,10 @@ body::before {
 }
 
 #app {
-  max-width: 420px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 40px;
   min-height: 100vh;
 }
 
@@ -47,7 +48,10 @@ body::before {
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 40px);
+  padding: 20px;
   animation: fadeIn 0.3s ease;
+  overflow-y: auto;
+  width: 100%;
 }
 
 .screen.active {
@@ -60,6 +64,86 @@ body::before {
 }
 
 /* START SCREEN */
+.start-screen-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.professor-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  width: 240px;
+  min-width: 240px;
+  overflow: visible;
+}
+
+.start-screen-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Responsive: Switch to vertical layout on mobile */
+@media (max-width: 768px) {
+  .start-screen-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .professor-info {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .start-screen-content {
+    max-width: 100%;
+  }
+}
+
+.professor-photo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid rgba(100, 255, 218, 0.3);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.professor-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #64ffda;
+  text-align: center;
+  margin: 0 0 12px 0;
+}
+
+.welcome-text {
+  font-size: 18px;
+  color: #8892b0;
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}
+
 .logo {
   font-size: 80px;
   margin-bottom: 24px;
@@ -77,6 +161,73 @@ h1 {
   color: #8892b0;
   margin-bottom: 48px;
   font-size: 16px;
+}
+
+/* COURSE SELECTION */
+.course-selection {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.course-selection-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #64ffda;
+  margin-bottom: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.course-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.course-btn {
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.course-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.course-btn.active {
+  background: rgba(100, 255, 218, 0.2);
+  border-color: #64ffda;
+  color: #64ffda;
+  font-weight: 600;
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+}
+
+.selected-course {
+  text-align: center;
+  font-size: 14px;
+  color: #64ffda;
+  font-weight: 500;
+  padding: 8px;
+  background: rgba(100, 255, 218, 0.1);
+  border-radius: 8px;
 }
 
 .deck-info {
@@ -106,7 +257,7 @@ h1 {
 /* ANALYTICS SECTION */
 .analytics-section {
   width: 100%;
-  max-width: 380px;
+  max-width: 500px;
   margin-bottom: 40px;
   padding: 28px 24px;
   background: rgba(255, 255, 255, 0.05);
@@ -260,10 +411,17 @@ h1 {
   font-weight: 700;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #4cd9b5;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(100, 255, 218, 0.4);
+}
+
+.btn-primary:disabled {
+  background: rgba(100, 255, 218, 0.3);
+  color: rgba(26, 26, 46, 0.5);
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .btn-secondary {
@@ -463,10 +621,24 @@ h1 {
 
 .name-reveal h2 {
   font-size: 28px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   text-align: center;
   font-weight: 700;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pronunciation-guide {
+  font-size: 16px;
+  color: #64ffda;
+  margin-bottom: 20px;
+  text-align: center;
+  font-style: italic;
+  padding: 8px 16px;
+  background: rgba(100, 255, 218, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 /* EVALUATION BUTTONS */

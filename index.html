@@ -11,30 +11,63 @@
     
     <!-- START SCREEN -->
     <div id="start-screen" class="screen active">
-      <div class="logo">🎓</div>
-      <h1>Name Recall</h1>
-      <p class="subtitle">Review student names before class</p>
-      <div class="deck-info">
-        <span id="deck-count">10</span> students in deck
-      </div>
-      
-      <!-- Analytics Section -->
-      <div class="analytics-section">
-        <div class="analytics-card">
-          <div class="analytics-stat">
-            <span class="analytics-label">Total Sessions</span>
-            <span class="analytics-value" id="session-count">0</span>
-          </div>
-          <div class="analytics-stat">
-            <span class="analytics-label">This Week</span>
-            <span class="analytics-value" id="weekly-frequency">0</span>
-          </div>
+      <div class="start-screen-container">
+        <!-- Professor Info - Left Side -->
+        <div class="professor-info">
+          <img id="professor-photo" src="" alt="Professor" class="professor-photo">
+          <h2 id="professor-name" class="professor-name"></h2>
+          <p class="welcome-text">Welcome Alex!</p>
         </div>
-        <div class="analytics-trend" id="accuracy-trend"></div>
-        <div class="last-session-info" id="last-session"></div>
+        
+        <!-- Main Content - Right/Center -->
+        <div class="start-screen-content">
+          <div class="logo">🎓</div>
+          <h1>Name Recall</h1>
+          <p class="subtitle">Review student names before class</p>
+          
+          <!-- Course Selection -->
+          <div class="course-selection">
+            <h3 class="course-selection-title">Select Course</h3>
+            <div class="course-buttons">
+              <button class="course-btn" data-course="Digital Product Design">
+                Digital Product Design
+              </button>
+              <button class="course-btn" data-course="Digital Product Management">
+                Digital Product Management
+              </button>
+              <button class="course-btn" data-course="Coding with GPT">
+                Coding with GPT
+              </button>
+              <button class="course-btn" data-course="Digital Capstone">
+                Digital Capstone
+              </button>
+            </div>
+            <div id="selected-course" class="selected-course hidden"></div>
+          </div>
+          
+          <div class="deck-info">
+            <span id="deck-count">0</span> students in deck
+          </div>
+          
+          <!-- Analytics Section -->
+          <div class="analytics-section">
+            <div class="analytics-card">
+              <div class="analytics-stat">
+                <span class="analytics-label">Total Sessions</span>
+                <span class="analytics-value" id="session-count">0</span>
+              </div>
+              <div class="analytics-stat">
+                <span class="analytics-label">This Week</span>
+                <span class="analytics-value" id="weekly-frequency">0</span>
+              </div>
+            </div>
+            <div class="analytics-trend" id="accuracy-trend"></div>
+            <div class="last-session-info" id="last-session"></div>
+          </div>
+          
+          <button id="start-btn" class="btn btn-primary">Begin Review</button>
+        </div>
       </div>
-      
-      <button id="start-btn" class="btn btn-primary">Begin Review</button>
     </div>
 
     <!-- FLASHCARD SCREEN -->
@@ -60,6 +93,7 @@
           </div>
           <div class="name-reveal">
             <h2 id="student-name"></h2>
+            <p class="pronunciation-guide" id="pronunciation-text"></p>
             <button id="audio-btn" class="btn btn-audio">
               🔊 Hear pronunciation
             </button>

@@ -1,7 +1,17 @@
 // ============================================
+// PROFESSOR DATA
+// ============================================
+const professor = {
+  name: "Alex Cowan",
+  photoUrl: "AlexC.png",
+  title: "Professor"
+};
+
+// ============================================
 // MOCK STUDENT DATA
 // ============================================
 const students = [
+  // Digital Product Design (10 students)
   {
     id: 1,
     firstName: "Sarah",
@@ -9,7 +19,8 @@ const students = [
     preferredName: "Sarah Chen",
     photoUrl: "https://randomuser.me/api/portraits/women/44.jpg",
     pronunciation: "SAIR-uh CHEN",
-    gender: "female"
+    gender: "female",
+    course: "Digital Product Design"
   },
   {
     id: 2,
@@ -18,7 +29,8 @@ const students = [
     preferredName: "Marcus Johnson",
     photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
     pronunciation: "MAR-kus JOHN-son",
-    gender: "male"
+    gender: "male",
+    course: "Digital Product Design"
   },
   {
     id: 3,
@@ -27,7 +39,8 @@ const students = [
     preferredName: "Priya Patel",
     photoUrl: "https://randomuser.me/api/portraits/women/65.jpg",
     pronunciation: "PREE-yah puh-TEL",
-    gender: "female"
+    gender: "female",
+    course: "Digital Product Design"
   },
   {
     id: 4,
@@ -36,7 +49,8 @@ const students = [
     preferredName: "Jamie O'Brien",
     photoUrl: "https://randomuser.me/api/portraits/men/75.jpg",
     pronunciation: "JAY-mee oh-BRY-en",
-    gender: "male"
+    gender: "male",
+    course: "Digital Product Design"
   },
   {
     id: 5,
@@ -45,7 +59,8 @@ const students = [
     preferredName: "Yuki Tanaka",
     photoUrl: "https://randomuser.me/api/portraits/women/52.jpg",
     pronunciation: "YOO-kee tah-NAH-kah",
-    gender: "female"
+    gender: "female",
+    course: "Digital Product Design"
   },
   {
     id: 6,
@@ -54,7 +69,8 @@ const students = [
     preferredName: "Ahmed Hassan",
     photoUrl: "https://randomuser.me/api/portraits/men/22.jpg",
     pronunciation: "AH-med hah-SAHN",
-    gender: "male"
+    gender: "male",
+    course: "Digital Product Design"
   },
   {
     id: 7,
@@ -63,7 +79,8 @@ const students = [
     preferredName: "Emily Rodriguez",
     photoUrl: "https://randomuser.me/api/portraits/women/28.jpg",
     pronunciation: "EM-uh-lee rod-REE-gez",
-    gender: "female"
+    gender: "female",
+    course: "Digital Product Design"
   },
   {
     id: 8,
@@ -72,7 +89,8 @@ const students = [
     preferredName: "Wei Zhang",
     photoUrl: "https://randomuser.me/api/portraits/men/55.jpg",
     pronunciation: "WAY JAHNG",
-    gender: "male"
+    gender: "male",
+    course: "Digital Product Design"
   },
   {
     id: 9,
@@ -81,7 +99,8 @@ const students = [
     preferredName: "Seun Adeyemi",
     photoUrl: "https://randomuser.me/api/portraits/men/18.jpg",
     pronunciation: "SHAY-oon ah-DEH-yeh-mee",
-    gender: "male"
+    gender: "male",
+    course: "Digital Product Design"
   },
   {
     id: 10,
@@ -90,7 +109,311 @@ const students = [
     preferredName: "Maria Gonzalez",
     photoUrl: "https://randomuser.me/api/portraits/women/33.jpg",
     pronunciation: "mah-REE-ah gon-ZAH-lez",
-    gender: "female"
+    gender: "female",
+    course: "Digital Product Design"
+  },
+  // Digital Product Management (10 students)
+  {
+    id: 11,
+    firstName: "David",
+    lastName: "Kim",
+    preferredName: "David Kim",
+    photoUrl: "https://randomuser.me/api/portraits/men/12.jpg",
+    pronunciation: "DAY-vid KIM",
+    gender: "male",
+    course: "Digital Product Management"
+  },
+  {
+    id: 12,
+    firstName: "Sophia",
+    lastName: "Martinez",
+    preferredName: "Sophia Martinez",
+    photoUrl: "https://randomuser.me/api/portraits/women/12.jpg",
+    pronunciation: "so-FEE-ah mar-TEE-nez",
+    gender: "female",
+    course: "Digital Product Management"
+  },
+  {
+    id: 13,
+    firstName: "Ryan",
+    lastName: "Thompson",
+    preferredName: "Ryan Thompson",
+    photoUrl: "https://randomuser.me/api/portraits/men/45.jpg",
+    pronunciation: "RY-an TOM-son",
+    gender: "male",
+    course: "Digital Product Management"
+  },
+  {
+    id: 14,
+    firstName: "Isabella",
+    lastName: "White",
+    preferredName: "Isabella White",
+    photoUrl: "https://randomuser.me/api/portraits/women/45.jpg",
+    pronunciation: "iz-uh-BEL-uh WYT",
+    gender: "female",
+    course: "Digital Product Management"
+  },
+  {
+    id: 15,
+    firstName: "Michael",
+    lastName: "Brown",
+    preferredName: "Michael Brown",
+    photoUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+    pronunciation: "MY-kul BROWN",
+    gender: "male",
+    course: "Digital Product Management"
+  },
+  {
+    id: 16,
+    firstName: "Olivia",
+    lastName: "Davis",
+    preferredName: "Olivia Davis",
+    photoUrl: "https://randomuser.me/api/portraits/women/67.jpg",
+    pronunciation: "oh-LIV-ee-uh DAY-vis",
+    gender: "female",
+    course: "Digital Product Management"
+  },
+  {
+    id: 17,
+    firstName: "Daniel",
+    lastName: "Wilson",
+    preferredName: "Daniel Wilson",
+    photoUrl: "https://randomuser.me/api/portraits/men/88.jpg",
+    pronunciation: "DAN-yul WIL-son",
+    gender: "male",
+    course: "Digital Product Management"
+  },
+  {
+    id: 18,
+    firstName: "Emma",
+    lastName: "Anderson",
+    preferredName: "Emma Anderson",
+    photoUrl: "https://randomuser.me/api/portraits/women/88.jpg",
+    pronunciation: "EM-uh AN-der-son",
+    gender: "female",
+    course: "Digital Product Management"
+  },
+  {
+    id: 19,
+    firstName: "Christopher",
+    lastName: "Lee",
+    preferredName: "Chris Lee",
+    photoUrl: "https://randomuser.me/api/portraits/men/15.jpg",
+    pronunciation: "KRIS LEE",
+    gender: "male",
+    course: "Digital Product Management"
+  },
+  {
+    id: 20,
+    firstName: "Ava",
+    lastName: "Taylor",
+    preferredName: "Ava Taylor",
+    photoUrl: "https://randomuser.me/api/portraits/women/15.jpg",
+    pronunciation: "AY-vuh TAY-lor",
+    gender: "female",
+    course: "Digital Product Management"
+  },
+  // Coding with GPT (10 students)
+  {
+    id: 21,
+    firstName: "Noah",
+    lastName: "Moore",
+    preferredName: "Noah Moore",
+    photoUrl: "https://randomuser.me/api/portraits/men/25.jpg",
+    pronunciation: "NO-uh MOOR",
+    gender: "male",
+    course: "Coding with GPT"
+  },
+  {
+    id: 22,
+    firstName: "Mia",
+    lastName: "Jackson",
+    preferredName: "Mia Jackson",
+    photoUrl: "https://randomuser.me/api/portraits/women/25.jpg",
+    pronunciation: "MEE-ah JAK-son",
+    gender: "female",
+    course: "Coding with GPT"
+  },
+  {
+    id: 23,
+    firstName: "Ethan",
+    lastName: "Harris",
+    preferredName: "Ethan Harris",
+    photoUrl: "https://randomuser.me/api/portraits/men/35.jpg",
+    pronunciation: "EE-thun HAIR-is",
+    gender: "male",
+    course: "Coding with GPT"
+  },
+  {
+    id: 24,
+    firstName: "Charlotte",
+    lastName: "Clark",
+    preferredName: "Charlotte Clark",
+    photoUrl: "https://randomuser.me/api/portraits/women/35.jpg",
+    pronunciation: "SHAR-lut KLARK",
+    gender: "female",
+    course: "Coding with GPT"
+  },
+  {
+    id: 25,
+    firstName: "Lucas",
+    lastName: "Lewis",
+    preferredName: "Lucas Lewis",
+    photoUrl: "https://randomuser.me/api/portraits/men/48.jpg",
+    pronunciation: "LOO-kus LOO-is",
+    gender: "male",
+    course: "Coding with GPT"
+  },
+  {
+    id: 26,
+    firstName: "Amelia",
+    lastName: "Robinson",
+    preferredName: "Amelia Robinson",
+    photoUrl: "https://randomuser.me/api/portraits/women/48.jpg",
+    pronunciation: "uh-MEEL-yuh ROB-in-son",
+    gender: "female",
+    course: "Coding with GPT"
+  },
+  {
+    id: 27,
+    firstName: "Mason",
+    lastName: "Walker",
+    preferredName: "Mason Walker",
+    photoUrl: "https://randomuser.me/api/portraits/men/58.jpg",
+    pronunciation: "MAY-son WAH-ker",
+    gender: "male",
+    course: "Coding with GPT"
+  },
+  {
+    id: 28,
+    firstName: "Harper",
+    lastName: "Young",
+    preferredName: "Harper Young",
+    photoUrl: "https://randomuser.me/api/portraits/women/58.jpg",
+    pronunciation: "HAR-per YUNG",
+    gender: "female",
+    course: "Coding with GPT"
+  },
+  {
+    id: 29,
+    firstName: "Alexander",
+    lastName: "King",
+    preferredName: "Alex King",
+    photoUrl: "https://randomuser.me/api/portraits/men/72.jpg",
+    pronunciation: "AL-ig-ZAN-der KING",
+    gender: "male",
+    course: "Coding with GPT"
+  },
+  {
+    id: 30,
+    firstName: "Evelyn",
+    lastName: "Wright",
+    preferredName: "Evelyn Wright",
+    photoUrl: "https://randomuser.me/api/portraits/women/72.jpg",
+    pronunciation: "EV-uh-lin RYT",
+    gender: "female",
+    course: "Coding with GPT"
+  },
+  // Digital Capstone (10 students)
+  {
+    id: 31,
+    firstName: "Benjamin",
+    lastName: "Lopez",
+    preferredName: "Ben Lopez",
+    photoUrl: "https://randomuser.me/api/portraits/men/82.jpg",
+    pronunciation: "BEN-juh-min loh-PEZ",
+    gender: "male",
+    course: "Digital Capstone"
+  },
+  {
+    id: 32,
+    firstName: "Abigail",
+    lastName: "Hill",
+    preferredName: "Abigail Hill",
+    photoUrl: "https://randomuser.me/api/portraits/women/82.jpg",
+    pronunciation: "AB-ih-gayl HIL",
+    gender: "female",
+    course: "Digital Capstone"
+  },
+  {
+    id: 33,
+    firstName: "Henry",
+    lastName: "Scott",
+    preferredName: "Henry Scott",
+    photoUrl: "https://randomuser.me/api/portraits/men/91.jpg",
+    pronunciation: "HEN-ree SKOT",
+    gender: "male",
+    course: "Digital Capstone"
+  },
+  {
+    id: 34,
+    firstName: "Elizabeth",
+    lastName: "Green",
+    preferredName: "Liz Green",
+    photoUrl: "https://randomuser.me/api/portraits/women/91.jpg",
+    pronunciation: "LIZ GREEN",
+    gender: "female",
+    course: "Digital Capstone"
+  },
+  {
+    id: 35,
+    firstName: "Sebastian",
+    lastName: "Adams",
+    preferredName: "Sebastian Adams",
+    photoUrl: "https://randomuser.me/api/portraits/men/3.jpg",
+    pronunciation: "suh-BAS-chun AD-umz",
+    gender: "male",
+    course: "Digital Capstone"
+  },
+  {
+    id: 36,
+    firstName: "Sofia",
+    lastName: "Baker",
+    preferredName: "Sofia Baker",
+    photoUrl: "https://randomuser.me/api/portraits/women/3.jpg",
+    pronunciation: "so-FEE-ah BAY-ker",
+    gender: "female",
+    course: "Digital Capstone"
+  },
+  {
+    id: 37,
+    firstName: "Matthew",
+    lastName: "Nelson",
+    preferredName: "Matt Nelson",
+    photoUrl: "https://randomuser.me/api/portraits/men/7.jpg",
+    pronunciation: "MAT NEL-son",
+    gender: "male",
+    course: "Digital Capstone"
+  },
+  {
+    id: 38,
+    firstName: "Victoria",
+    lastName: "Carter",
+    preferredName: "Victoria Carter",
+    photoUrl: "https://randomuser.me/api/portraits/women/7.jpg",
+    pronunciation: "vik-TOR-ee-uh KAR-ter",
+    gender: "female",
+    course: "Digital Capstone"
+  },
+  {
+    id: 39,
+    firstName: "Joseph",
+    lastName: "Mitchell",
+    preferredName: "Joe Mitchell",
+    photoUrl: "https://randomuser.me/api/portraits/men/9.jpg",
+    pronunciation: "JOH MICH-ul",
+    gender: "male",
+    course: "Digital Capstone"
+  },
+  {
+    id: 40,
+    firstName: "Grace",
+    lastName: "Perez",
+    preferredName: "Grace Perez",
+    photoUrl: "https://randomuser.me/api/portraits/women/9.jpg",
+    pronunciation: "GRAYS peh-REZ",
+    gender: "female",
+    course: "Digital Capstone"
   }
 ];
 
@@ -104,7 +427,8 @@ let state = {
   currentCard: null,
   cardShownTime: null,
   sessionStartTime: null,
-  totalStudents: students.length,
+  totalStudents: 0,
+  selectedCourse: null,
   isFlipped: false,
   mediaRecorder: null,
   recordedChunks: [],
@@ -278,7 +602,52 @@ function formatTime(ms) {
 // ============================================
 // GAME LOGIC
 // ============================================
-function initSession(studentList = students) {
+function getStudentsByCourse(courseName) {
+  return students.filter(student => student.course === courseName);
+}
+
+function selectCourse(courseName) {
+  state.selectedCourse = courseName;
+  const courseStudents = getStudentsByCourse(courseName);
+  
+  // Update UI
+  const selectedCourseEl = document.getElementById('selected-course');
+  if (selectedCourseEl) {
+    selectedCourseEl.textContent = `Selected: ${courseName}`;
+    selectedCourseEl.classList.remove('hidden');
+  }
+  
+  // Update deck count
+  elements.deckCount.textContent = courseStudents.length;
+  
+  // Update course buttons
+  document.querySelectorAll('.course-btn').forEach(btn => {
+    if (btn.dataset.course === courseName) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Enable start button
+  if (elements.startBtn) {
+    elements.startBtn.disabled = false;
+    elements.startBtn.textContent = 'Begin Review';
+  }
+  
+  console.log(`Course selected: ${courseName} (${courseStudents.length} students)`);
+}
+
+function initSession(studentList = null) {
+  // If no student list provided, use selected course students
+  if (!studentList) {
+    if (!state.selectedCourse) {
+      console.error('No course selected');
+      return;
+    }
+    studentList = getStudentsByCourse(state.selectedCourse);
+  }
+  
   state = {
     queue: shuffle([...studentList]),
     completed: [],
@@ -287,6 +656,7 @@ function initSession(studentList = students) {
     cardShownTime: null,
     sessionStartTime: Date.now(),
     totalStudents: studentList.length,
+    selectedCourse: state.selectedCourse,
     isFlipped: false,
     mediaRecorder: null,
     recordedChunks: [],
@@ -294,7 +664,21 @@ function initSession(studentList = students) {
   };
   
   elements.totalNum.textContent = state.totalStudents;
-  elements.deckCount.textContent = students.length;
+  elements.deckCount.textContent = studentList.length;
+  
+  // Update professor info
+  const professorPhoto = document.getElementById('professor-photo');
+  const professorName = document.getElementById('professor-name');
+  if (professorPhoto) {
+    professorPhoto.src = professor.photoUrl;
+    professorPhoto.onerror = function() {
+      // Fallback if image fails to load
+      this.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
+    };
+  }
+  if (professorName) {
+    professorName.textContent = professor.name;
+  }
 }
 
 function showNextCard() {
@@ -321,6 +705,12 @@ function showNextCard() {
   elements.cardPhotoFront.src = state.currentCard.photoUrl;
   elements.cardPhotoBack.src = state.currentCard.photoUrl;
   elements.studentName.textContent = state.currentCard.preferredName;
+  
+  // Update pronunciation guide text
+  const pronunciationEl = document.getElementById('pronunciation-text');
+  if (pronunciationEl) {
+    pronunciationEl.textContent = state.currentCard.pronunciation;
+  }
 
   // Update progress
   const reviewed = state.completed.length + 1;
@@ -821,6 +1211,10 @@ function showResults() {
 }
 
 function startSession() {
+  if (!state.selectedCourse) {
+    alert('Please select a course first');
+    return;
+  }
   initSession();
   showScreen('card');
   showNextCard();
@@ -829,7 +1223,9 @@ function startSession() {
 function reviewMissedOnly() {
   // Review students who missed on first attempt (even if they got it right later)
   const missedIds = state.results.filter(r => !r.firstAttemptCorrect).map(r => r.studentId);
-  const missedStudents = students.filter(s => missedIds.includes(s.id));
+  // Filter by selected course to ensure we only get students from the current course
+  const courseStudents = state.selectedCourse ? getStudentsByCourse(state.selectedCourse) : students;
+  const missedStudents = courseStudents.filter(s => missedIds.includes(s.id));
   initSession(missedStudents);
   showScreen('card');
   showNextCard();
@@ -880,7 +1276,40 @@ if (elements.backToHomeBtn) {
 // ============================================
 // INITIALIZE
 // ============================================
-initSession();
+// Initialize professor info immediately
+const professorPhoto = document.getElementById('professor-photo');
+const professorName = document.getElementById('professor-name');
+if (professorPhoto) {
+  professorPhoto.src = professor.photoUrl;
+  professorPhoto.onerror = function() {
+    // Fallback if image fails to load
+    console.error('Failed to load professor image, using placeholder');
+    this.src = 'https://ui-avatars.com/api/?name=Alex+Cowan&size=200&background=64ffda&color=1a1a2e&bold=true';
+  };
+  professorPhoto.onload = function() {
+    console.log('Professor image loaded successfully');
+  };
+}
+if (professorName) {
+  professorName.textContent = professor.name;
+}
+
+// Initialize course selection buttons
+document.querySelectorAll('.course-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const courseName = btn.dataset.course;
+    selectCourse(courseName);
+  });
+});
+
+// Disable start button until course is selected
+if (elements.startBtn) {
+  elements.startBtn.disabled = true;
+  elements.startBtn.textContent = 'Select a course to begin';
+}
+
 updateStartScreenAnalytics();
 console.log('Name Recall App Initialized');
-console.log('Students loaded:', students.length);
+console.log('Total students:', students.length);
+console.log('Courses available:', [...new Set(students.map(s => s.course))]);
+console.log('Professor:', professor.name);
