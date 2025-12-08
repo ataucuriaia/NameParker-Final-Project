@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Test results (temporary)
+test-results/
+
+# Playwright report is NOT ignored - we want to commit it
+# playwright-report/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+

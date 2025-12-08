@@ -1,0 +1,14 @@
+{
+  "name": "name-recall-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for Name Recall application",
+  "scripts": {
+    "test": "playwright test",
+    "test:name-recall": "playwright test name-recall.spec.js",
+    "show-report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
+
